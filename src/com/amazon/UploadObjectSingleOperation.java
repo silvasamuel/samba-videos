@@ -5,22 +5,25 @@ import java.io.IOException;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 public class UploadObjectSingleOperation {
-	private static String bucketName     = "videosamba";
-	private static String keyName        = "";
+	private static String bucketName = "videosamba";
+	private static String keyName = "AKIAIZVFBD7E63TFX2EA";
 	private static String uploadFileName = "";
 	
-	public static void main(String[] args) throws IOException {
-        AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+	public void upload() throws IOException {
+		AWSCredentials credentials = new BasicAWSCredentials("AKIAIYWBURTWL2WSLNAQ", "/fiCK7x8j0aFGdx0Q0QlOEWPb3eJQvmxN+VNFXIw");
+		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
         
         try {
             File file = new File(uploadFileName);
-            s3client.putObject(new PutObjectRequest(bucketName, keyName, file));
+            s3Client.putObject(new PutObjectRequest(bucketName, keyName, file));
 
          } catch (AmazonServiceException ase) {
             System.out.println("Error Message:    " + ase.getMessage());
