@@ -32,6 +32,12 @@
 	    <artifactId>aws-java-sdk</artifactId>
 	    <version>1.11.271</version>
 	</dependency>
+	
+	<dependency>
+		<groupId>org.primefaces</groupId>
+		<artifactId>primefaces</artifactId>
+		<version>6.1</version>
+	</dependency>
 </dependencies>
   
 </project>
