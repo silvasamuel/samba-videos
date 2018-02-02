@@ -1,5 +1,6 @@
 package com.amazon;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -20,20 +22,25 @@ public class UploadObjectSingleOperation {
 	private static String bucketInputName = "videosamba/input";
 	private static String bucketOutputName = "videosamba/output";
 	
-	public void upload(File file) throws IOException {
-		AWSCredentials credentials = new BasicAWSCredentials("AKIAI6P2QTS6BRVAUZPQ", "x5fWrkFrOd5zIMhwuWMkGwI5ZcSed7ok9WkAHxyW");
+	public void upload(String fileName, byte [] file) throws IOException {
+		AWSCredentials credentials = new BasicAWSCredentials("AKIAJXKGQCGCC3UFNRDA", "dfDgk7yEFPHrUEgssWw/CwYuwiCMy1mXKFOjCUeH");
 		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion("us-east-2").withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
         
         try {
-			s3Client.putObject(new PutObjectRequest(bucketInputName, file.getName(), file));
-			
-			String outputFileName = file.getName().substring(0, file.getName().lastIndexOf('.')).concat(".mp4");
+        	Long contentLength = Long.valueOf(file.length);
+        	InputStream inputStream = new ByteArrayInputStream(file);
+        	ObjectMetadata metadata = new ObjectMetadata();
+        	metadata.setContentLength(contentLength);
         	
-			setTimeout(() -> {	
-				S3Object s3object = s3Client.getObject(new GetObjectRequest(bucketOutputName, outputFileName));
-				video = s3object.getObjectContent();
-				System.out.println("teste");
-			}, 1000);
+			s3Client.putObject(new PutObjectRequest(bucketInputName, fileName, inputStream, metadata));
+			
+			String outputFileName = fileName.substring(0, fileName.lastIndexOf('.')).concat(".mp4");
+			S3Object s3object = s3Client.getObject(new GetObjectRequest(bucketOutputName, outputFileName));
+			video = s3object.getObjectContent();
+        	
+//			setTimeout(() -> {	
+//				System.out.println("teste");
+//			}, 1000);
 
          } catch (AmazonServiceException ase) {
             System.out.println("Error Message:    " + ase.getMessage());

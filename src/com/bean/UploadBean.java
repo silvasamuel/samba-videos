@@ -1,6 +1,5 @@
 package com.bean;
 
-import java.io.File;
 import java.io.IOException;
 import javax.faces.bean.ManagedBean;
 import org.primefaces.model.UploadedFile;
@@ -15,7 +14,8 @@ public class UploadBean {
         if(file != null) {
         	UploadObjectSingleOperation objectUpload = new UploadObjectSingleOperation();
         	
-        	objectUpload.upload(new File("C:\\Users\\silva\\Downloads\\Video.mp4"));
+        	//objectUpload.upload(new File("C:\\Users\\silva\\Downloads\\Video.mp4"));
+        	objectUpload.upload(file.getFileName(), file.getContents());
         	
         	objectUpload.getVideo();
             //FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " is uploaded.");
