@@ -10,11 +10,15 @@
 <h:head>
 </h:head>
 <h:body>
-	<h1>Hello World PrimeFaces</h1>
-
-	<h:form>
-	   <p:editor value="#{upload.value}" />
-	</h:form>
+	<h1>Submit your video herer</h1>
+	
+	<h:form enctype="multipart/form-data">
+    <p:growl id="messages" showDetail="true" />
+ 
+    <p:fileUpload value="#{upload.file}" mode="simple" skinSimple="true"/>
+ 
+    <p:commandButton value="Submit" ajax="false" actionListener="#{upload.uploadVideo}" disabled="false" />
+</h:form>
 
 </h:body>
 </html>
