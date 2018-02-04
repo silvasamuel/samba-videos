@@ -8,20 +8,27 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
+	<link rel="stylesheet" type="text/css" href="resources/css/sambaStyle.css"/>
 </h:head>
 <h:body>
-	<h1>Submit your video herer</h1>
-	
-	<h:form enctype="multipart/form-data">
-	    <p:growl id="messages" showDetail="true" />
-	 
-	    <p:fileUpload value="#{upload.file}" mode="simple" skinSimple="true"/>
-	 
-	    <p:commandButton value="Submit" ajax="false" actionListener="#{upload.uploadVideo}" disabled="false" />
-	    
-	    <p:commandButton id="redirectButton" value="Download the video" action="#{upload.downloadVideo}"
-	    	ajax="false" disabled="#{upload.redirectPageStatus}"/>	    	
-	</h:form>
 
+	<div class="content">
+		<img class="logo" src="resources/images/logos_samba.png"/>
+		
+		<div id="form">
+			<h1>Submit your video herer</h1>
+			
+			<h:form enctype="multipart/form-data">
+			    <p:growl id="messages" showDetail="true" />
+			 
+			    <p:fileUpload value="#{upload.file}" mode="simple" skinSimple="true"/>
+			 
+			    <p:commandButton value="Submit" ajax="false" actionListener="#{upload.uploadVideo}" 
+			    	disabled="false" update="grid" />
+			    	
+			    <h4>It can take some minutes, so be patience :)</h4>
+			</h:form>
+		</div>
+	</div>
 </h:body>
 </html>

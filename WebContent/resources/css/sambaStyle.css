@@ -1,0 +1,17 @@
+body {
+	background-color: #FFE522;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+	color: white;
+}
+
+.content {
+	margin: auto;
+    width: 30%;
+}
+
+.logo {
+	margin-left: 80px;
+}

@@ -1,9 +1,6 @@
 package com.bean;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -18,8 +15,6 @@ import com.amazon.UploadObjectSingleOperation;
 public class UploadBean {
 
 	private UploadedFile file;
-	private boolean redirectPageStatus = true;
-	private InputStream uploadedVideo;
 	
 	public void uploadVideo() throws IOException, InterruptedException {
         if(file != null) {
@@ -30,24 +25,10 @@ public class UploadBean {
             FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
             
-            setRedirectPageStatus(false);
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            externalContext.redirect(objectUpload.getVideoUrl());
         }
     }
-	
-	public void downloadVideo() throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = context.getExternalContext();
-		OutputStream outputStream = externalContext.getResponseOutputStream();
-		
-		byte [] buffer = new byte[1024];
-		int length;
-		
-		while((length = uploadedVideo.read(buffer)) > 0) {
-			outputStream.write(buffer, 0 , length);
-		}
-		
-		context.responseComplete();
-	}
 	
 	public UploadedFile getFile() {
         return file;
@@ -56,12 +37,4 @@ public class UploadBean {
     public void setFile(UploadedFile file) {
         this.file = file;
     }
-
-	public boolean isRedirectPageStatus() {
-		return redirectPageStatus;
-	}
-
-	public void setRedirectPageStatus(boolean redirectPageStatus) {
-		this.redirectPageStatus = redirectPageStatus;
-	}
 }
