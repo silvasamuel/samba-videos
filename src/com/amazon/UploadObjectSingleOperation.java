@@ -19,12 +19,14 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 public class UploadObjectSingleOperation {
 	private String videoUrl;
+	private String outputFileName;
+	private AmazonS3 s3Client;
 	private static String bucketInputName = "videosamba/input";
 	private static String bucketOutputName = "videosamba/output";
 	
 	public void upload(String fileName, byte [] file) throws IOException, InterruptedException {
 		AWSCredentials credentials = new BasicAWSCredentials("AKIAJXKGQCGCC3UFNRDA", "dfDgk7yEFPHrUEgssWw/CwYuwiCMy1mXKFOjCUeH");
-		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion("us-east-2").withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
+		s3Client = AmazonS3ClientBuilder.standard().withRegion("us-east-2").withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
         
         try {
         	Long contentLength = Long.valueOf(file.length);
@@ -34,29 +36,7 @@ public class UploadObjectSingleOperation {
         	
 			s3Client.putObject(new PutObjectRequest(bucketInputName, fileName, inputStream, metadata));
 			
-			String outputFileName = fileName.substring(0, fileName.lastIndexOf('.')).concat(".mp4");
-			
-			java.util.Date expiration = new java.util.Date();
-			long milliSeconds = expiration.getTime();
-			milliSeconds += 1000 * 60 * 60; // Add 1 hour.
-			expiration.setTime(milliSeconds);
-
-			GeneratePresignedUrlRequest generatePresignedUrlRequest = 
-				    new GeneratePresignedUrlRequest(bucketOutputName, outputFileName);
-			generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
-			generatePresignedUrlRequest.setExpiration(expiration);
-			
-			boolean isSearching = true;
-			videoUrl = "";
-			
-			while(isSearching) {
-	           	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
-	           	videoUrl = url.toString();
-	            
-	            if(videoUrl != "") {
-	            	break;
-            	}
-			}
+			outputFileName = fileName.substring(0, fileName.lastIndexOf('.')).concat(".mp4");
 
          } catch (AmazonServiceException ase) {
             System.out.println("Error Message:    " + ase.getMessage());
@@ -68,6 +48,21 @@ public class UploadObjectSingleOperation {
             System.out.println("Error Message: " + ace.getMessage());
         }
     }
+	
+	public void watchUploadedVideo() {
+		java.util.Date expiration = new java.util.Date();
+		long milliSeconds = expiration.getTime();
+		milliSeconds += 1000 * 60 * 60; // Add 1 hour.
+		expiration.setTime(milliSeconds);
+
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = 
+			    new GeneratePresignedUrlRequest(bucketOutputName, outputFileName);
+		generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
+		generatePresignedUrlRequest.setExpiration(expiration);
+		
+       	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
+       	videoUrl = url.toString();
+	}
 	
     public void setTimeout(Runnable runnable, int delay){
         new Thread(() -> {
@@ -87,5 +82,13 @@ public class UploadObjectSingleOperation {
 
 	public void setVideoUrl(String videoUrl) {
 		this.videoUrl = videoUrl;
+	}
+	
+	public String getOutputFileName() {
+		return outputFileName;
+	}
+
+	public void setOutputFileName(String outputFileName) {
+		this.outputFileName = outputFileName;
 	}
 }

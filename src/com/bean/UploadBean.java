@@ -14,21 +14,26 @@ import com.amazon.UploadObjectSingleOperation;
 @SessionScoped
 public class UploadBean {
 
+	private UploadObjectSingleOperation objectUpload = new UploadObjectSingleOperation();
 	private UploadedFile file;
+	private boolean isDisabled = true;
 	
 	public void uploadVideo() throws IOException, InterruptedException {
         if(file != null) {
-        	UploadObjectSingleOperation objectUpload = new UploadObjectSingleOperation();
-        	
         	objectUpload.upload(file.getFileName(), file.getContents());
+        	
+        	isDisabled = false;
         	
             FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
-            
-            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-            externalContext.redirect(objectUpload.getVideoUrl());
         }
     }
+	
+	public void watchUploadedVideo() throws IOException {
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		objectUpload.watchUploadedVideo();
+        externalContext.redirect(objectUpload.getVideoUrl());
+	}
 	
 	public UploadedFile getFile() {
         return file;
@@ -37,4 +42,12 @@ public class UploadBean {
     public void setFile(UploadedFile file) {
         this.file = file;
     }
+
+	public boolean isDisabled() {
+		return isDisabled;
+	}
+
+	public void setDisabled(boolean isDisabled) {
+		this.isDisabled = isDisabled;
+	}
 }

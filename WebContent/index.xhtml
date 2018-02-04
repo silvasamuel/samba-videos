@@ -25,7 +25,10 @@
 			 
 			    <p:commandButton value="Submit" ajax="false" actionListener="#{upload.uploadVideo}" 
 			    	disabled="false" update="grid" />
-			    	
+				
+				<br/>
+				<p:commandButton value="Watch uploaded video" ajax="false" actionListener="#{upload.watchUploadedVideo}" 
+			    	disabled="#{upload.disabled}" />			    	
 			    <h4>It can take some minutes, so be patience :)</h4>
 			</h:form>
 		</div>
