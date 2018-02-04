@@ -32,7 +32,15 @@ public class UploadBean {
 	public void watchUploadedVideo() throws IOException {
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 		objectUpload.watchUploadedVideo();
-        externalContext.redirect(objectUpload.getVideoUrl());
+		
+		String url = objectUpload.getVideoUrl();
+		
+		if(url != "") {			
+			externalContext.redirect(objectUpload.getVideoUrl());
+		} else {
+			FacesMessage message = new FacesMessage("Warning", "Please wait, the file is still being converted!");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+		}
 	}
 	
 	public UploadedFile getFile() {
