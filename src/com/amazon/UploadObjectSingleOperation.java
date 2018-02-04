@@ -13,6 +13,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -49,32 +50,29 @@ public class UploadObjectSingleOperation {
         }
     }
 	
-	public void watchUploadedVideo() {
-		java.util.Date expiration = new java.util.Date();
-		long milliSeconds = expiration.getTime();
-		milliSeconds += 1000 * 60 * 60; // Add 1 hour.
-		expiration.setTime(milliSeconds);
-
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = 
-			    new GeneratePresignedUrlRequest(bucketOutputName, outputFileName);
-		generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
-		generatePresignedUrlRequest.setExpiration(expiration);
+	public boolean watchUploadedVideo() {
+		try	{
+			s3Client.getObject(bucketOutputName, outputFileName);
 		
-       	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
-       	videoUrl = url.toString();
-	}
+			java.util.Date expiration = new java.util.Date();
+			long milliSeconds = expiration.getTime();
+			milliSeconds += 1000 * 60 * 60; // Add 1 hour.
+			expiration.setTime(milliSeconds);
 	
-    public void setTimeout(Runnable runnable, int delay){
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-                runnable.run();
-            }
-            catch (Exception e){
-                System.err.println(e);
-            }
-        }).start();
-    }
+			GeneratePresignedUrlRequest generatePresignedUrlRequest = 
+				    new GeneratePresignedUrlRequest(bucketOutputName, outputFileName);
+			generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
+			generatePresignedUrlRequest.setExpiration(expiration);
+			
+	       	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
+	       	videoUrl = url.toString(); 	
+		}
+		catch (AmazonS3Exception e)	{
+			return false;
+		}
+		
+		return true;
+	}
 
 	public String getVideoUrl() {
 		return videoUrl;
