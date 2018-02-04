@@ -46,19 +46,17 @@ public class UploadObjectSingleOperation {
 			generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
 			generatePresignedUrlRequest.setExpiration(expiration);
 			
-			//boolean isSearching = true;
+			boolean isSearching = true;
 			videoUrl = "";
 			
-			//while(isSearching) {
-			//  setTimeout(() -> {    
-	            	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
-	            	videoUrl = url.toString();
-	            	//  }, 1000);
+			while(isSearching) {
+	           	URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 	                
+	           	videoUrl = url.toString();
 	            
-	            //if(videoUrl != "") {
-	            	//break;
-            		//	}
-			//}
+	            if(videoUrl != "") {
+	            	break;
+            	}
+			}
 
          } catch (AmazonServiceException ase) {
             System.out.println("Error Message:    " + ase.getMessage());
